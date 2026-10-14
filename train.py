@@ -10,6 +10,7 @@ import argparse
 import os
 import gymnasium as gym
 from stable_baselines3 import PPO
+from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 
@@ -17,14 +18,17 @@ from stable_baselines3.common.evaluation import evaluate_policy
 def main(timesteps: int, seed: int, model_path: str):
     os.makedirs(os.path.dirname(model_path) or ".", exist_ok=True)
     os.makedirs("logs", exist_ok=True)
+    os.makedirs("models/checkpoints", exist_ok=True)
 
     env = gym.make("LunarLander-v3")
     env = Monitor(env)
 
     model = PPO("MlpPolicy", env, verbose=1, seed=seed,
                 tensorboard_log="./logs/")
+    ckpt = CheckpointCallback(save_freq=100_000, save_path="models/checkpoints/",
+                              name_prefix="ppo_lunar")
     print(f"Training PPO for {timesteps} timesteps...")
-    model.learn(total_timesteps=timesteps, log_interval=10)
+    model.learn(total_timesteps=timesteps, log_interval=10, callback=ckpt)
     model.save(model_path)
     print(f"Saved to {model_path}.zip")
 
