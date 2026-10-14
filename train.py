@@ -15,12 +15,14 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 
 
-def main(timesteps: int, seed: int, model_path: str):
+def main(timesteps: int, seed: int, model_path: str, wrapper: str = "none"):
     os.makedirs(os.path.dirname(model_path) or ".", exist_ok=True)
     os.makedirs("logs", exist_ok=True)
     os.makedirs("models/checkpoints", exist_ok=True)
 
+    from rewards import WRAPPERS
     env = gym.make("LunarLander-v3")
+    env = WRAPPERS[wrapper](env)
     env = Monitor(env)
 
     model = PPO("MlpPolicy", env, verbose=1, seed=seed,
@@ -47,5 +49,7 @@ if __name__ == "__main__":
     p.add_argument("--timesteps", type=int, default=1_000_000)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--model", type=str, default="models/ppo_lunar_1M")
+    p.add_argument("--wrapper", type=str, default="none",
+                   choices=["none", "time_fee", "hover", "fixed"])
     args = p.parse_args()
-    main(args.timesteps, args.seed, args.model)
+    main(args.timesteps, args.seed, args.model, args.wrapper)
