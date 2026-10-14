@@ -24,7 +24,7 @@ def main(timesteps: int, seed: int, model_path: str):
     model = PPO("MlpPolicy", env, verbose=1, seed=seed,
                 tensorboard_log="./logs/")
     print(f"Training PPO for {timesteps} timesteps...")
-    model.learn(total_timesteps=timesteps, progress_interval=10)
+    model.learn(total_timesteps=timesteps, log_interval=10)
     model.save(model_path)
     print(f"Saved to {model_path}.zip")
 
