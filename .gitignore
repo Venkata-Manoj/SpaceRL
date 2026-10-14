@@ -1,0 +1,22 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Models / logs / media
+models/
+logs/
+videos/
+*.mp4
+*.gif
+*.zip
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# others
+info.txt
